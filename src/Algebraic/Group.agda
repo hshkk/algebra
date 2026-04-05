@@ -1,4 +1,4 @@
-module Group where
+module Algebraic.Group where
 
 open import Reasoning
 
@@ -69,7 +69,7 @@ record Group (A : Set) : Set where
         b
        =[ sym (id-r b) ]
         b · e
-       =[ cong (λ f → b · f) (sym (inv-r a))]
+       =[ cong (λ f → b · f) (sym (inv-r a)) ]
         b · (a · i a)
        =[ sym (assoc b a (i a)) ]
         (b · a) · i a
@@ -84,7 +84,7 @@ record Group (A : Set) : Set where
         b
        =[ sym (id-r b) ]
         b · e
-       =[ cong (λ f → b · f) (sym (inv-r a))]
+       =[ cong (λ f → b · f) (sym (inv-r a)) ]
         b · (a · i a)
        =[ sym (assoc b a (i a)) ]
         (b · a) · i a
@@ -101,7 +101,7 @@ record Group (A : Set) : Set where
         b
        =[ sym (id-r b) ]
         b · e
-       =[ cong (λ f → b · f) (sym (inv-r a))]
+       =[ cong (λ f → b · f) (sym (inv-r a)) ]
         b · (a · i a)
        =[ sym (assoc b a (i a)) ]
         (b · a) · i a
@@ -127,6 +127,3 @@ record AbelianGroup (A : Set) : Set where
 
     _+_ : A → A → A
     _+_ = _·_
-
-
-
