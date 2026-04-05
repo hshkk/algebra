@@ -64,6 +64,57 @@ record Group (A : Set) : Set where
         a
        ∎
 
+    unique-id : ∀ (a b : A) → b · a == a → b == e
+    unique-id a b p =
+        b
+       =[ sym (id-r b) ]
+        b · e
+       =[ cong (λ f → b · f) (sym (inv-r a))]
+        b · (a · i a)
+       =[ sym (assoc b a (i a)) ]
+        (b · a) · i a
+       =[ cong (λ f → f · i a) p ]
+        a · i a
+       =[ inv-r a ]
+        e
+       ∎
+    
+    unique-inv : ∀ (a b : A) → b · a == e → b == i a
+    unique-inv a b p = 
+        b
+       =[ sym (id-r b) ]
+        b · e
+       =[ cong (λ f → b · f) (sym (inv-r a))]
+        b · (a · i a)
+       =[ sym (assoc b a (i a)) ]
+        (b · a) · i a
+       =[ cong (λ f → f · i a) p ]
+        e · i a
+       =[ id-l (i a) ]
+        i a
+       ∎
+
+    -- unique-id and unique-inv are specific instances of unique-soln.
+    
+    unique-soln : ∀ (a b c : A) → b · a == c · a → b == c
+    unique-soln a b c p = 
+        b
+       =[ sym (id-r b) ]
+        b · e
+       =[ cong (λ f → b · f) (sym (inv-r a))]
+        b · (a · i a)
+       =[ sym (assoc b a (i a)) ]
+        (b · a) · i a
+       =[ cong (λ f → f · i a) p ]
+        (c · a) · i a
+       =[ assoc c a (i a) ]
+        c · (a · i a)
+       =[ cong (λ f → c · f) (inv-r a) ]
+        c · e
+       =[ id-r c ]
+        c
+       ∎
+
 record AbelianGroup (A : Set) : Set where
 
     infixl 4 _+_
