@@ -49,6 +49,21 @@ record Group (A : Set) : Set where
         a 
        ∎
 
+    inv-of-inv : ∀ (a : A) → i (i a) == a
+    inv-of-inv a =
+        i (i a)
+       =[ sym (id-l (i (i a))) ]
+        e · i (i a)
+       =[ cong (λ f → f · i (i a)) (sym (inv-r a)) ]
+        (a · i a) · i (i a)
+       =[ assoc a (i a) (i (i a)) ]
+        a · (i a · i (i a))
+       =[ cong (λ f → a · f) (inv-r (i a)) ]
+        a · e
+       =[ id-r a ]
+        a
+       ∎
+
 record AbelianGroup (A : Set) : Set where
 
     infixl 4 _+_

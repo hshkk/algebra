@@ -6,7 +6,7 @@ data _==_ {A : Set} (x : A) : A → Set where
     refl : x == x
 
 trans : ∀ {A : Set} {x y z : A} → x == y → y == z → x == z
-trans refl p = p
+trans refl a = a
 
 sym : ∀ {A : Set} {x y : A} → x == y → y == x
 sym refl = refl
@@ -18,7 +18,7 @@ infixr 2 _=[_]_
 infix  3 _∎
 
 _=[_]_ : ∀ {A : Set} (x {y z} : A) → x == y → y == z → x == z
-_ =[ p ] q = trans p q
+_ =[ a ] b = trans a b
 
 _∎ : ∀ {A : Set} (x : A) → x == x
-x ∎ = refl
+_∎ _ = refl
