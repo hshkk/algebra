@@ -4,20 +4,20 @@ open import Reasoning
 
 open import Agda.Builtin.Nat using (Nat; zero; suc; _+_)
 
-record Group (A : Set) : Set where
+record Group (G : Set) : Set where
 
     infixl 5 _·_
 
     field
-        _·_   : A → A → A -- binary operation
-        e     : A         -- identity
-        i     : A → A     -- inverse
+        _·_   : G → G → G -- binary operation
+        e     : G         -- identity
+        i     : G → G     -- inverse
     
-        assoc : ∀ (a b c : A) → (a · b) · c == a · (b · c)
-        id-l  : ∀ (a : A) → e · a == a
-        inv-l : ∀ (a : A) → i a · a == e
+        assoc : ∀ (a b c : G) → (a · b) · c == a · (b · c)
+        id-l  : ∀ (a : G) → e · a == a
+        inv-l : ∀ (a : G) → i a · a == e
 
-    inv-r : ∀ (a : A) → a · i a == e
+    inv-r : ∀ (a : G) → a · i a == e
     inv-r a =
         a · i a
        =[ sym (id-l (a · i a)) ]
@@ -38,7 +38,7 @@ record Group (A : Set) : Set where
         e
        ∎
 
-    id-r : ∀ (a : A) → a · e == a
+    id-r : ∀ (a : G) → a · e == a
     id-r a = 
         a · e 
        =[ cong (λ f → a · f) (sym (inv-l a)) ] 
@@ -51,7 +51,7 @@ record Group (A : Set) : Set where
         a 
        ∎
 
-    inv-of-inv : ∀ (a : A) → i (i a) == a
+    inv-of-inv : ∀ (a : G) → i (i a) == a
     inv-of-inv a =
         i (i a)
        =[ sym (id-l (i (i a))) ]
@@ -66,7 +66,7 @@ record Group (A : Set) : Set where
         a
        ∎
 
-    unique-id : ∀ (a b : A) → b · a == a → b == e
+    unique-id : ∀ (a b : G) → b · a == a → b == e
     unique-id a b p =
         b
        =[ sym (id-r b) ]
@@ -81,7 +81,7 @@ record Group (A : Set) : Set where
         e
        ∎
     
-    unique-inv : ∀ (a b : A) → b · a == e → b == i a
+    unique-inv : ∀ (a b : G) → b · a == e → b == i a
     unique-inv a b p = 
         b
        =[ sym (id-r b) ]
@@ -97,8 +97,8 @@ record Group (A : Set) : Set where
        ∎
 
     -- unique-id and unique-inv are specific instances of unique-soln.
-    
-    unique-soln : ∀ (a b c : A) → b · a == c · a → b == c
+
+    unique-soln : ∀ (a b c : G) → b · a == c · a → b == c
     unique-soln a b c p = 
         b
        =[ sym (id-r b) ]
@@ -117,13 +117,13 @@ record Group (A : Set) : Set where
         c
        ∎
 
-    -- a^n
-
-    rep : A → Nat → A
+    -- Provides the operation aⁿ. 
+    -- (a⁻ⁿ would be achieved via rep (i a) n.)
+    rep : G → Nat → G
     rep a zero    = e
     rep a (suc n) = a · rep a n
 
-    rep-dist-+ : ∀ (a : A) (m n : Nat) → rep a (m + n) == rep a m · rep a n
+    rep-dist-+ : ∀ (a : G) (m n : Nat) → rep a (m + n) == rep a m · rep a n
     rep-dist-+ a zero n =
         rep a (zero + n)
        =[ refl ]
@@ -147,15 +147,15 @@ record Group (A : Set) : Set where
         rep a (suc m) · rep a n
        ∎
 
-record AbelianGroup (A : Set) : Set where
+record AbelianGroup (G : Set) : Set where
 
     field
-        g    : Group A
-        comm : ∀ (a b : A) → Group._·_ g a b == Group._·_ g b a
+        {{ g }} : Group G
+        comm    : ∀ (a b : G) → Group._·_ g a b == Group._·_ g b a
     
     open Group g public
 
-    rep-dist-· : ∀ (a b : A) (n : Nat) → rep (a · b) n == rep a n · rep b n
+    rep-dist-· : ∀ (a b : G) (n : Nat) → rep (a · b) n == rep a n · rep b n
     rep-dist-· a b zero =
         rep (a · b) zero
        =[ refl ]

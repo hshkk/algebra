@@ -16,6 +16,11 @@ sym refl = refl
 cong : ∀ {A B : Set} {x y : A} → (f : A → B) → x == y → f x == f y
 cong f refl = refl
 
+data ⊥ : Set where
+    
+_/=_ : ∀ {A : Set} → A → A → Set
+a /= b = a == b → ⊥
+
 -- EQUATIONAL REASONING
 
 infixr 2 _=[_]_
