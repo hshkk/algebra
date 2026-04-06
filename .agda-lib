@@ -1,4 +1,4 @@
-name: algebra
-depend:
+name:    algebra
+depend: 
 include: src
 flags:
