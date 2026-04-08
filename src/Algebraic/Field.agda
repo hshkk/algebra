@@ -10,20 +10,69 @@ record Field (F : Set) : Set where
     field
         {{ g }} : AbelianGroup F
 
-        _*_    : F → F → F
-        e*     : F
+        _*_     : F → F → F
+        E       : F
         -- Here, we incorporate a nonzero requirement for invertibility at the type level.
-        i*     : (a : F) → {_ : a /= AbelianGroup.e g} → F
+        I       : ∀ (a : F) → {_ : a /= AbelianGroup.e g} → F
 
-        assoc* : ∀ (a b c : F) → (a * b) * c == a * (b * c)
-        comm*  : ∀ (a b : F) → a * b == b * a
-        id-l*  : ∀ (a : F) → e* * a == a
-        inv-l* : ∀ (a : F) → {p : a /= AbelianGroup.e g} → i* a {p} * a == e*
-        dist   : ∀ (a b c : F) → a * (AbelianGroup._·_ g b c) == AbelianGroup._·_ g (a * b) (a * c)
+        assoc*  : ∀ (a b c : F) → (a * b) * c == a * (b * c)
+        comm*   : ∀ (a b : F) → a * b == b * a
+        id-l*   : ∀ (a : F) → E * a == a
+        inv-l*  : ∀ (a : F) {p : a /= AbelianGroup.e g} → I a {p} * a == E
+
+        dist    : ∀ (a b c : F) → a * (AbelianGroup._·_ g b c) == AbelianGroup._·_ g (a * b) (a * c)
 
     open AbelianGroup g public
-        renaming (_·_ to _+_; e to e+; i to i+;
-                  assoc to assoc+; id-l to id-l+; inv-l to inv-l+; comm to comm+)
+        renaming (_·_ to _+_; {- e to e; i to i; -}
+                  assoc to assoc+; id-l to id-l+; inv-l to inv-l+; 
+                  comm to comm+)
+
+    e-annihilates : ∀ (a : F) → e == e * a
+    e-annihilates a =
+        e
+       =[ sym (inv-l+ (e * a)) ]
+        i (e * a) + (e * a)
+       =[ cong (λ f → i (e * a) + f) (cong (λ f → f * a) (sym (id-l+ e))) ]
+        i (e * a) + ((e + e) * a)
+       =[ cong (λ f → i (e * a) + f) (comm* (e + e) a) ]
+        i (e * a) + (a * (e + e))
+       =[ cong (λ f → i (e * a) + f) (dist a e e) ]
+        i (e * a) + ((a * e) + (a * e))
+       =[ sym (assoc+ (i (e * a)) (a * e) (a * e)) ]
+        (i (e * a) + (a * e)) + (a * e)
+       =[ cong (λ f → (i (e * a) + f) + (a * e)) (comm* a e) ]
+        (i (e * a) + (e * a)) + (a * e)
+       =[ cong (λ f → f + (a * e)) (inv-l+ (e * a)) ]
+        e + (a * e)
+       =[ id-l+ (a * e) ]
+        a * e
+       =[ comm* a e ]
+        e * a
+       ∎
+
+    inv-is-never-e : ∀ (a : F) {p : a /= e} → I a {p} /= e
+    inv-is-never-e a = ?
+
+    inv-r* : ∀ (a : F) {p : a /= e} → a * I a {p} == E
+    inv-r* a =
+        a * I a
+       =[ sym (id-l* (a * I a)) ]
+        E * (a * I a)
+       =[ sym (assoc* E a (I a)) ]
+        (E * a) * I a
+       =[ cong (λ f → (f * a) * I a) (sym (inv-l* (I a))) ]
+        ((I (I a) * I a) * a) * I a
+       =[ cong (λ f → f * I a) (assoc* (I (I a)) (I a) a) ]
+        (I (I a) * (I a * a)) * I a
+       =[ cong (λ f → (I (I a) * f) * I a) (inv-l* a) ]
+        (I (I a) * E) * I a
+       =[ assoc* (I (I a)) E (I a) ]
+        I (I a) * (E * I a)
+       =[ cong (λ f → I (I a) * f) (id-l* (I a)) ]
+        I (I a) * I a
+       =[ inv-l* (I a) ]
+        E
+       ∎
 
     foil : ∀ (a b c d : F) → (a + b) * (c + d) == a * c + a * d + b * c + b * d
     foil a b c d =
