@@ -27,6 +27,24 @@ record Field (F : Set) : Set where
                   assoc to assoc+; id-l to id-l+; inv-l to inv-l+; 
                   comm to comm+)
 
+    inv-r* : ∀ (a : F) {p : a /= e} → a * I a {p} == E
+    inv-r* a =
+        a * I a
+       =[ comm* a (I a) ]
+        I a * a
+       =[ inv-l* a ]
+        E
+       ∎
+
+    id-r* : ∀ (a : F) → a * E == a
+    id-r* a =
+        a * E
+       =[ comm* a E ]
+        E * a
+       =[ id-l* a ]
+        a
+       ∎
+
     e-annihilates : ∀ (a : F) → e == e * a
     e-annihilates a =
         e
@@ -51,28 +69,20 @@ record Field (F : Set) : Set where
        ∎
 
     inv-is-never-e : ∀ (a : F) {p : a /= e} → I a {p} /= e
-    inv-is-never-e a = ?
-
-    inv-r* : ∀ (a : F) {p : a /= e} → a * I a {p} == E
-    inv-r* a =
-        a * I a
-       =[ sym (id-l* (a * I a)) ]
-        E * (a * I a)
-       =[ sym (assoc* E a (I a)) ]
-        (E * a) * I a
-       =[ cong (λ f → (f * a) * I a) (sym (inv-l* (I a))) ]
-        ((I (I a) * I a) * a) * I a
-       =[ cong (λ f → f * I a) (assoc* (I (I a)) (I a) a) ]
-        (I (I a) * (I a * a)) * I a
-       =[ cong (λ f → (I (I a) * f) * I a) (inv-l* a) ]
-        (I (I a) * E) * I a
-       =[ assoc* (I (I a)) E (I a) ]
-        I (I a) * (E * I a)
-       =[ cong (λ f → I (I a) * f) (id-l* (I a)) ]
-        I (I a) * I a
-       =[ inv-l* (I a) ]
-        E
-       ∎
+    inv-is-never-e a {p} q {- I a == e -} =
+       -- I a == e implies a == e (inner lemma).
+       p (a
+         =[ sym (id-l* a) ]
+          E * a
+         =[ cong (λ f → f * a) (sym (inv-l* a)) ]
+          (I a * a) * a
+         =[ cong (λ f → (f * a) * a) q ]
+          (e * a) * a
+         =[ cong (λ f → f * a) (sym (e-annihilates a)) ]
+          e * a
+         =[ sym (e-annihilates a) ]
+          e 
+         ∎)
 
     foil : ∀ (a b c d : F) → (a + b) * (c + d) == a * c + a * d + b * c + b * d
     foil a b c d =
