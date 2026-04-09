@@ -45,32 +45,34 @@ record Field (F : Set) : Set where
         a
        ∎
 
-    e-annihilates : ∀ (a : F) → e == e * a
+    e-annihilates : ∀ (a : F) → e * a == e
     e-annihilates a =
-        e
-       =[ sym (inv-l+ (e * a)) ]
-        i (e * a) + (e * a)
-       =[ cong (λ f → i (e * a) + f) (cong (λ f → f * a) (sym (id-l+ e))) ]
-        i (e * a) + ((e + e) * a)
-       =[ cong (λ f → i (e * a) + f) (comm* (e + e) a) ]
-        i (e * a) + (a * (e + e))
-       =[ cong (λ f → i (e * a) + f) (dist a e e) ]
-        i (e * a) + ((a * e) + (a * e))
-       =[ sym (assoc+ (i (e * a)) (a * e) (a * e)) ]
-        (i (e * a) + (a * e)) + (a * e)
-       =[ cong (λ f → (i (e * a) + f) + (a * e)) (comm* a e) ]
-        (i (e * a) + (e * a)) + (a * e)
-       =[ cong (λ f → f + (a * e)) (inv-l+ (e * a)) ]
-        e + (a * e)
-       =[ id-l+ (a * e) ]
-        a * e
-       =[ comm* a e ]
         e * a
+       =[ comm* e a ]
+        a * e
+       =[ sym (id-l+ (a * e)) ]
+        e + (a * e)
+       =[ cong (λ f → f + (a * e)) (sym (inv-l+ (e * a))) ]
+        (i (e * a) + (e * a)) + (a * e)
+       =[ cong (λ f → (i (e * a) + f) + (a * e)) (comm* e a) ]
+        (i (e * a) + (a * e)) + (a * e)
+       =[ assoc+  (i (e * a)) (a * e) (a * e) ]
+        i (e * a) + ((a * e) + (a * e))
+       =[ cong (λ f → i (e * a) + f) (sym (dist a e e)) ]
+        i (e * a) + (a * (e + e))
+       =[ cong (λ f → i (e * a) + f) (comm* a (e + e)) ]
+        i (e * a) + ((e + e) * a)
+       =[ cong (λ f → i (e * a) + (f * a)) (id-l+ e) ]
+        i (e * a) + (e * a)
+       =[ inv-l+ (e * a) ]
+        e
        ∎
 
     inv-is-never-e : ∀ (a : F) {p : a /= e} → I a {p} /= e
-    inv-is-never-e a {p} q {- I a == e -} =
-       -- I a == e implies a == e (inner lemma).
+    inv-is-never-e a {p} q =
+       -- q         : I a {p} == e
+       -- lemma     : ∀ (a : F) {p : a /= e} → I a {p} == e → a == e
+       -- p (lemma) : ⊥
        p (a
          =[ sym (id-l* a) ]
           E * a
@@ -78,9 +80,9 @@ record Field (F : Set) : Set where
           (I a * a) * a
          =[ cong (λ f → (f * a) * a) q ]
           (e * a) * a
-         =[ cong (λ f → f * a) (sym (e-annihilates a)) ]
+         =[ cong (λ f → f * a) (e-annihilates a) ]
           e * a
-         =[ sym (e-annihilates a) ]
+         =[ e-annihilates a ]
           e 
          ∎)
 
