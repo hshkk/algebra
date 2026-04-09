@@ -52,19 +52,15 @@ record Field (F : Set) : Set where
         a * e
        =[ sym (id-l+ (a * e)) ]
         e + (a * e)
-       =[ cong (λ f → f + (a * e)) (sym (inv-l+ (e * a))) ]
-        (i (e * a) + (e * a)) + (a * e)
-       =[ cong (λ f → (i (e * a) + f) + (a * e)) (comm* e a) ]
-        (i (e * a) + (a * e)) + (a * e)
-       =[ assoc+  (i (e * a)) (a * e) (a * e) ]
-        i (e * a) + ((a * e) + (a * e))
-       =[ cong (λ f → i (e * a) + f) (sym (dist a e e)) ]
-        i (e * a) + (a * (e + e))
-       =[ cong (λ f → i (e * a) + f) (comm* a (e + e)) ]
-        i (e * a) + ((e + e) * a)
-       =[ cong (λ f → i (e * a) + (f * a)) (id-l+ e) ]
-        i (e * a) + (e * a)
-       =[ inv-l+ (e * a) ]
+       =[ cong (λ f → f + (a * e)) (sym (inv-l+ (a * e))) ]
+        (i (a * e) + (a * e)) + (a * e)
+       =[ assoc+  (i (a * e)) (a * e) (a * e) ]
+        i (a * e) + ((a * e) + (a * e))
+       =[ cong (λ f → i (a * e) + f) (sym (dist a e e)) ]
+        i (a * e) + (a * (e + e))
+       =[ cong (λ f → i (a * e) + (a * f)) (id-l+ e) ]
+        i (a * e) + (a * e)
+       =[ inv-l+ (a * e) ]
         e
        ∎
 
