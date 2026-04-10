@@ -116,6 +116,23 @@ record Group (G : Set) : Set where
        =[ id-r c ]
         c
        ∎
+    
+    unique-soln-by-inv : ∀ (a b : G) → i a == i b → a == b
+    unique-soln-by-inv a b p =
+        a
+       =[ sym (id-r a) ]
+        a · e
+       =[ cong (λ f → a · f) (sym (inv-l b)) ]
+        a · (i b · b)
+       =[ cong (λ f → a · (f · b)) (sym p) ]
+        a · (i a · b)
+       =[ sym (assoc a (i a) b) ]
+        (a · i a) · b
+       =[ cong (λ f → f · b) (inv-r a) ]
+        e · b
+       =[ id-l b ]
+        b
+       ∎        
 
     -- Provides the operation aⁿ. 
     -- (a⁻ⁿ would be achieved via rep (i a) n.)

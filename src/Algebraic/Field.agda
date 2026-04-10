@@ -20,12 +20,14 @@ record Field (F : Set) : Set where
         id-l*   : ∀ (a : F) → E * a == a
         inv-l*  : ∀ (a : F) {p : a /= AbelianGroup.e g} → I a {p} * a == E
 
-        dist    : ∀ (a b c : F) → a * (AbelianGroup._·_ g b c) == AbelianGroup._·_ g (a * b) (a * c)
+        dist-l  : ∀ (a b c : F) → a * (AbelianGroup._·_ g b c) == AbelianGroup._·_ g (a * b) (a * c)
+        dist-r  : ∀ (a b c : F) → (AbelianGroup._·_ g a b) * c == AbelianGroup._·_ g (a * c) (b * c)
 
     open AbelianGroup g public
         renaming (_·_ to _+_; {- e to e; i to i; -}
-                  assoc to assoc+; id-l to id-l+; inv-l to inv-l+; 
-                  comm to comm+)
+                  assoc to assoc+; id-l to id-l+; inv-l to inv-l+; inv-r to inv-r+; 
+                  comm to comm+;
+                  unique-inv to unique-inv+; unique-soln-by-inv to unique-soln-by-inv+)
 
     inv-r* : ∀ (a : F) {p : a /= e} → a * I a {p} == E
     inv-r* a =
@@ -45,6 +47,30 @@ record Field (F : Set) : Set where
         a
        ∎
 
+    inv-dist-l : ∀ (a b : F) → i (a + b) == i a + i b
+    inv-dist-l a b =
+       sym (
+        i a + i b
+       =[ unique-inv+ (a + b) (i a + i b) 
+              ((i a + i b) + (a + b)
+             =[ comm+ (i a + i b) (a + b) ]
+              (a + b) + (i a + i b)
+             =[ cong (λ f → (a + b) + f) (comm+ (i a) (i b)) ]
+              (a + b) + (i b + i a)
+             =[ assoc+ a b (i b + i a) ]
+              a + (b + (i b + i a))
+             =[ cong (λ f → a + f) (sym (assoc+ b (i b) (i a))) ]
+              a + ((b + i b) + i a)
+             =[ cong (λ f → a + (f + i a)) (inv-r+ b) ]
+              a + (e + i a)
+             =[ cong (λ f → a + f) (id-l+ (i a)) ]
+              a + i a
+             =[ inv-r+ a ] 
+              e
+             ∎) ]
+        i (a + b)
+       ∎)
+
     e-annihilates : ∀ (a : F) → e * a == e
     e-annihilates a =
         e * a
@@ -56,13 +82,29 @@ record Field (F : Set) : Set where
         (i (a * e) + (a * e)) + (a * e)
        =[ assoc+  (i (a * e)) (a * e) (a * e) ]
         i (a * e) + ((a * e) + (a * e))
-       =[ cong (λ f → i (a * e) + f) (sym (dist a e e)) ]
+       =[ cong (λ f → i (a * e) + f) (sym (dist-l a e e)) ]
         i (a * e) + (a * (e + e))
        =[ cong (λ f → i (a * e) + (a * f)) (id-l+ e) ]
         i (a * e) + (a * e)
        =[ inv-l+ (a * e) ]
         e
        ∎
+
+    inv-dist-push-l : ∀ (a b : F) → i (a * b) == i a * b
+    inv-dist-push-l a b =
+       sym (
+        i a * b
+       =[ (unique-inv+ (a * b) (i a * b)
+            ((i a * b) + (a * b)
+            =[ sym (dist-r (i a) a b) ]
+             (i a + a) * b
+            =[ cong (λ f → f * b) (inv-l+ a) ]
+             e * b
+            =[ e-annihilates b ]
+             e
+            ∎)) ]
+        i (a * b)
+       ∎)
 
     inv-is-never-e : ∀ (a : F) {p : a /= e} → I a {p} /= e
     inv-is-never-e a {p} q =
@@ -85,15 +127,15 @@ record Field (F : Set) : Set where
     foil : ∀ (a b c d : F) → (a + b) * (c + d) == a * c + a * d + b * c + b * d
     foil a b c d =
         (a + b) * (c + d)
-       =[ dist (a + b) c d ]
+       =[ dist-l (a + b) c d ]
         (a + b) * c + (a + b) * d
        =[ cong (λ f → f + (a + b) * d) (comm* (a + b) c) ]
         c * (a + b) + (a + b) * d
        =[ cong (λ f → c * (a + b) + f) ((comm* (a + b) d))]
         c * (a + b) + d * (a + b)
-       =[ cong (λ f → f + d * (a + b)) (dist c a b) ]
+       =[ cong (λ f → f + d * (a + b)) (dist-l c a b) ]
         (c * a + c * b) + d * (a + b)
-       =[ cong (λ f → c * a + c * b + f) (dist d a b) ]
+       =[ cong (λ f → c * a + c * b + f) (dist-l d a b) ]
         (c * a + c * b) + (d * a + d * b)
        =[ cong (λ f → (f + c * b) + (d * a + d * b)) (comm* c a) ]
         (a * c + c * b) + (d * a + d * b)
